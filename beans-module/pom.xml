@@ -43,7 +43,7 @@
                             <targetPackage>ru.sharmana.beans</targetPackage>
                             <annotationStyle>jackson2</annotationStyle>
                             <sourceType>json</sourceType>
-                            <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
+                            <useCommonsLang3>true</useCommonsLang3>
                             <includeToString>false</includeToString>
                             <useLongIntegers>true</useLongIntegers>
                             <generateBuilders>true</generateBuilders>

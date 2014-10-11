@@ -8,6 +8,7 @@ import ru.sharmana.beans.Event;
 import ru.sharmana.beans.Transaction;
 import ru.sharmana.beans.User;
 import ru.sharmana.misc.DBActions;
+import ru.sharmana.misc.DataActions;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static ru.sharmana.misc.DataActions.mergeTransactions;
 
 @Path("event")
 public class EventResource {
@@ -47,11 +49,6 @@ public class EventResource {
         dbEvents.insert(event);
 
         return Response.status(HttpStatus.CREATED_201).entity(event).build();
-    }
-
-    private List<Transaction> mergeTransactions(List<Transaction> original, List<Transaction> actual) {
-        original.addAll(actual);
-        return original;
     }
 
     @GET
