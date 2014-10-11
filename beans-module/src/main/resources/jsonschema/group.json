@@ -3,6 +3,9 @@
     "$schema": "http://json-schema.org/draft-03/schema#",
     "required": false,
     "properties": {
+        "_id": {
+            "type": "string"
+        },
         "users": {
             "type" : "object",
             "javaType": "java.lang.List<ru.sharmana.beans.User>"
