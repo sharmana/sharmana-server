@@ -12,6 +12,9 @@
         "currency": {
             "type": "string"
         },
+       "total": {
+            "type": "number"
+        },
         "created": {
             "javaType": "java.lang.Long",
             "type": "object"
