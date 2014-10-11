@@ -10,6 +10,13 @@
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>ru.sharmana.resources</param-value>
         </init-param>
+
+        <!-- Register my custom provider (not needed if it's in my.package) AND LoggingFilter. -->
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>ru.sharmana.filters.AuthFilter</param-value>
+        </init-param>
+
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>

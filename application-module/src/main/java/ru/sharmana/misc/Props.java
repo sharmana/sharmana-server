@@ -1,9 +1,11 @@
 package ru.sharmana.misc;
 
+import com.mongodb.ServerAddress;
 import ru.yandex.qatools.properties.PropertyLoader;
 import ru.yandex.qatools.properties.annotations.Property;
 
 import java.net.URI;
+import java.net.UnknownHostException;
 
 /**
  * User: lanwen
@@ -31,8 +33,12 @@ public class Props {
     @Property("mongo.dbname")
     private String dbName = "sharmana";
 
-    public URI getMongoUri() {
-        return mongoUri;
+    public ServerAddress getMongoServerAddress() {
+        try {
+            return new ServerAddress(mongoUri.getHost(), mongoUri.getPort());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException("Can't read mongodb host and port", e);
+        }
     }
 
     public String getDbName() {
