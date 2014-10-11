@@ -23,12 +23,12 @@ import java.util.List;
 import static ru.sharmana.misc.Marshalling.marshall;
 import static ru.sharmana.misc.Props.props;
 
-@Path("users")
+@Path("user")
 public class UserResource {
 
     public static final String USERS_COLLECTION = "users";
 
-    @PUT
+    @POST
     @Path("add")
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUser(@QueryParam("name") String name, @QueryParam("email") String email) throws UnknownHostException {

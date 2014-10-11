@@ -6,12 +6,23 @@
         "_id": {
             "type": "string"
         },
+        "name": {
+            "type": "string"
+        },
+        "currency": {
+            "type": "string"
+        },
+        "created": {
+            "javaType": "java.lang.Long",
+            "type": "object"
+        },
+        "emails": {
+            "type": "object",
+            "javaType": "java.util.List<java.lang.String>"
+        },
         "transactions": {
             "type": "object",
-            "javaType": "java.lang.List<ru.sharmana.beans.Transaction>"
-        },
-        "group": {
-            "type": "java.lang.List<java.lang.String>"
+            "javaType": "java.util.List<ru.sharmana.beans.Transaction>"
         },
         "status": {
             "type" : "enum",
