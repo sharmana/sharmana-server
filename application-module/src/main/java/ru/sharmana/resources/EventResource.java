@@ -1,6 +1,7 @@
 package ru.sharmana.resources;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
+import org.eclipse.jetty.http.HttpStatus;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
 import ru.sharmana.beans.Event;
@@ -16,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,28 +32,31 @@ public class EventResource {
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Event addGroup(Event event) throws IOException {
+    public Response addEvent(Event event) throws IOException {
         Preconditions.checkNotNull(event);
 
         MongoCollection dbEvents = DBActions.getCollection(EVENTS_COLLECTION);
+        if(event.getId() != null) {
+            Event writed = DBActions.selectById(dbEvents, event.getId(), Event.class);
+            writed.getTransactions().addAll(event.getTransactions());
+            dbEvents.save(writed);
+            return Response.ok(writed).build();
+        }
         dbEvents.insert(event);
 
-        return event;
+        return Response.status(HttpStatus.CREATED_201).entity(event).build();
     }
 
     @GET
     @Path("my")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Event> allFor(@HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
+    public List<Event> myEvents(@HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
         MongoCollection events = DBActions.getCollection(EVENTS_COLLECTION);
 
-        String auth = "54395f4130047d0c16c205df";
-
-        User current = DBActions.selectById(DBActions.getCollection(UserResource.USERS_COLLECTION), auth, User.class);
+        User current = DBActions.selectById(DBActions.getCollection(UserResource.USERS_COLLECTION), token, User.class);
         MongoCursor<Event> result = events.find("{emails:{$regex: #}}}", current.getEmail()).as(Event.class);
 
         return newArrayList(result.iterator());
     }
-
 
 }
