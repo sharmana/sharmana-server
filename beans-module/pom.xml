@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sharmana-backend</artifactId>
+        <groupId>ru.sharmana</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>beans-module</artifactId>
+    <name>sharmana-beans-module</name>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jongo</groupId>
+            <artifactId>jongo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!--http://joelittlejohn.github.io/jsonschema2pojo/site/0.4.5/generate-mojo.html-->
+            <plugin>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>0.4.5</version>
+
+                <executions>
+                    <execution>
+                        <id>json</id>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/resources/json</sourceDirectory>
+                            <targetPackage>ru.sharmana.beans</targetPackage>
+                            <annotationStyle>jackson2</annotationStyle>
+                            <sourceType>json</sourceType>
+                            <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
+                            <includeToString>false</includeToString>
+                            <useLongIntegers>true</useLongIntegers>
+                            <generateBuilders>true</generateBuilders>
+                        </configuration>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>jsonschema</id>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/resources/jsonschema</sourceDirectory>
+                            <targetPackage>ru.sharmana.beans</targetPackage>
+                            <annotationStyle>jackson2</annotationStyle>
+                            <sourceType>jsonschema</sourceType>
+                            <useCommonsLang3>true</useCommonsLang3>
+                            <includeToString>false</includeToString>
+                            <useLongIntegers>true</useLongIntegers>
+                            <generateBuilders>true</generateBuilders>
+                        </configuration>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--//-->
+        </plugins>
+    </build>
+
+</project>

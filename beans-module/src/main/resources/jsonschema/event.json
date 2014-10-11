@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "required": false,
+    "properties": {
+        "transactions": {
+            "type": "object",
+            "javaType": "java.lang.List<ru.sharmana.beans.Transaction>"
+        },
+        "group": {
+            "type": "string"
+        },
+        "status": {
+            "type" : "enum",
+            "enum": [
+                "open",
+                "closed"
+            ]
+        }
+    }
+}
