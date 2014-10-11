@@ -51,7 +51,10 @@ public class UserResource {
             if(user != null) {
                return Response.ok().entity(user).build();
             } else {
-                user = new User().withEmail(login.getDefaultEmail()).withYandexId(login.getId());
+                user = new User()
+                        .withEmail(login.getDefaultEmail())
+                        .withYandexId(login.getId())
+                        .withName(login.getLogin());
                 users.insert(user);
                 return Response.ok().entity(user).build();
             }

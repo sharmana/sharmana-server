@@ -23,8 +23,11 @@ public class AuthFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String auth = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
-        if (requestContext.getUriInfo().getPath().equals("")
-                || requestContext.getUriInfo().getPath().startsWith("user/auth")) {
+        if (
+                requestContext.getUriInfo().getPath().equals("")
+                        || requestContext.getUriInfo().getPath().startsWith("user/auth")
+                        || requestContext.getUriInfo().getPath().startsWith("application.wadl")
+                ) {
             return;
         }
 

@@ -18,4 +18,8 @@ public class DBActions {
 
         return jongo.getCollection(collection);
     }
+
+    public static <T> T selectById(MongoCollection collection, String id, Class<T> clazz) {
+        return collection.findOne("{_id: #}", id).as(clazz);
+    }
 }

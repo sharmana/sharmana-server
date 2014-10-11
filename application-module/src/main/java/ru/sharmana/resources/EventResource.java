@@ -1,24 +1,25 @@
 package ru.sharmana.resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
-import org.jongo.Jongo;
+import jersey.repackaged.com.google.common.base.Preconditions;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
 import ru.sharmana.beans.Event;
+import ru.sharmana.beans.User;
 import ru.sharmana.misc.DBActions;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-import static ru.sharmana.misc.Props.props;
 
 @Path("event")
 public class EventResource {
@@ -27,29 +28,28 @@ public class EventResource {
 
     @PUT
     @Path("add")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Object> addGroup() throws IOException {
-        MongoCollection users = DBActions.getCollection(EVENTS_COLLECTION);
-//        Event pojo = new Event().withName(name).withEmails(emails).withCurrency(currency).withCreated(created);
-//        users.save(pojo);
+    public Event addGroup(Event event) throws IOException {
+        Preconditions.checkNotNull(event);
 
-        return new ObjectMapper().reader(Event.class).readValues("[{\"name\":\"Поездка в Баварию\",\"currency\":\"руб\",\"created\":1413036541,\"emails\":[\"lanwen@yandex.ru\",\"some@yandex.ru\"],\"transactions\":[]},{\"_id\":\"54393d4f3004605fbc47df35\",\"name\":\"Поездка в Баварию\",\"currency\":\"руб\",\"created\":1413036542,\"emails\":[\"lanwen@yandex.ru\",\"some@yandex.ru\"],\"transactions\":[]},{\"_id\":\"543949df30045bfb81013770\",\"name\":\"Поездка в Баварию\",\"currency\":\"руб\",\"created\":1413036542,\"emails\":[\"lanwen@yandex.ru\",\"some@yandex.ru\"],\"transactions\":[]}]").readAll();
+        MongoCollection dbEvents = DBActions.getCollection(EVENTS_COLLECTION);
+        dbEvents.insert(event);
+
+        return event;
     }
 
     @GET
     @Path("my")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Event> allFor() throws UnknownHostException {
-        MongoClient client = new MongoClient(props().getMongoServerAddress().getHost(), props().getMongoServerAddress().getPort());
-        Jongo jongo = new Jongo(client.getDB(props().getDbName()));
+    public List<Event> allFor(@HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
+        MongoCollection events = DBActions.getCollection(EVENTS_COLLECTION);
 
-        MongoCollection users = jongo.getCollection(EVENTS_COLLECTION);
-        MongoCursor<Event> result = users.find().as(Event.class);
+        String auth = "54395f4130047d0c16c205df";
 
-//        List<Event> toMarshall = new ArrayList<>();
-//        for (Event event : result) {
-//            toMarshall.add(event);
-//        }
+        User current = DBActions.selectById(DBActions.getCollection(UserResource.USERS_COLLECTION), auth, User.class);
+        MongoCursor<Event> result = events.find("{emails:{$regex: #}}}", current.getEmail()).as(Event.class);
+
         return newArrayList(result.iterator());
     }
 
