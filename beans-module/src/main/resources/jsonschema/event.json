@@ -12,7 +12,7 @@
         "currency": {
             "type": "string"
         },
-       "total": {
+        "total": {
             "type": "number"
         },
         "created": {
@@ -27,8 +27,13 @@
             "type": "object",
             "javaType": "java.util.List<ru.sharmana.beans.Transaction>"
         },
+        "checkouts": {
+            "type": "object",
+            "javaType": "java.util.List<ru.sharmana.beans.Checkout>"
+        },
         "status": {
-            "type" : "enum",
+            "type": "enum",
+            "default": "open",
             "enum": [
                 "open",
                 "closed"
