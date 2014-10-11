@@ -5,6 +5,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
 import ru.sharmana.beans.Event;
+import ru.sharmana.beans.Transaction;
 import ru.sharmana.beans.User;
 import ru.sharmana.misc.DBActions;
 
@@ -14,7 +15,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,13 +38,20 @@ public class EventResource {
         MongoCollection dbEvents = DBActions.getCollection(EVENTS_COLLECTION);
         if(event.getId() != null) {
             Event writed = DBActions.selectById(dbEvents, event.getId(), Event.class);
-            writed.getTransactions().addAll(event.getTransactions());
+
+            List<Transaction> merged = mergeTransactions(writed.getTransactions(), event.getTransactions());
+            writed.setTransactions(merged);
             dbEvents.save(writed);
             return Response.ok(writed).build();
         }
         dbEvents.insert(event);
 
         return Response.status(HttpStatus.CREATED_201).entity(event).build();
+    }
+
+    private List<Transaction> mergeTransactions(List<Transaction> original, List<Transaction> actual) {
+        original.addAll(actual);
+        return original;
     }
 
     @GET
