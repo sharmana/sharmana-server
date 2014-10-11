@@ -5,11 +5,10 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
-import ru.sharmana.beans.*;
 import ru.sharmana.beans.Error;
+import ru.sharmana.beans.User;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,13 +22,12 @@ import java.util.List;
 import static ru.sharmana.misc.Marshalling.marshall;
 import static ru.sharmana.misc.Props.props;
 
-@Path("users")
-public class UserResource {
+@Path("event")
+public class GroupResource {
 
     public static final String USERS_COLLECTION = "users";
 
     @PUT
-    @Path("add")
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUser(@QueryParam("name") String name, @QueryParam("email") String email) throws UnknownHostException {
         MongoClient client = new MongoClient(props().getMongoUri().getHost(), props().getMongoUri().getPort());
