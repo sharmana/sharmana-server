@@ -2,13 +2,13 @@ package ru.sharmana.misc;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableListMultimap;
 import ru.sharmana.beans.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.FluentIterable.from;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 
 /**
  * User: lanwen
@@ -18,17 +18,24 @@ import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 public class DataActions {
 
     public static List<Transaction> mergeTransactions(List<Transaction> original, List<Transaction> actual) {
-        ImmutableCollection<Transaction> iterable = from(original).append(actual)
+        ImmutableListMultimap<String, Transaction> index = from(original).append(actual)
                 .index(new Function<Transaction, String>() {
+
                     @Override
                     public String apply(Transaction input) {
-                        return Joiner.on("").join(
+                        String join = Joiner.on("").join(
                                 input.getComment(),
                                 input.getWho(),
                                 input.getCount(),
                                 input.getDate());
+
+                        return join;
                     }
-                }).values();
-        return newArrayList(iterable);
+                });
+        List<Transaction> result = new ArrayList<>();
+        for (String key : index.keySet()) {
+            result.add(index.get(key).get(0));
+        }
+        return result;
     }
 }

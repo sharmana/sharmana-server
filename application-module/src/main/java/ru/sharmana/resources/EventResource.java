@@ -8,7 +8,6 @@ import ru.sharmana.beans.Event;
 import ru.sharmana.beans.Transaction;
 import ru.sharmana.beans.User;
 import ru.sharmana.misc.DBActions;
-import ru.sharmana.misc.DataActions;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -40,6 +39,10 @@ public class EventResource {
         MongoCollection dbEvents = DBActions.getCollection(EVENTS_COLLECTION);
         if(event.getId() != null) {
             Event writed = DBActions.selectById(dbEvents, event.getId(), Event.class);
+            if (writed == null) {
+                dbEvents.insert(event);
+                return Response.status(HttpStatus.CREATED_201).entity(event).build();
+            }
 
             List<Transaction> merged = mergeTransactions(writed.getTransactions(), event.getTransactions());
             writed.setTransactions(merged);
