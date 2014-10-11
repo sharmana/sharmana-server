@@ -1,6 +1,7 @@
 package ru.sharmana.misc;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableCollection;
 import ru.sharmana.beans.Transaction;
 
@@ -18,10 +19,14 @@ public class DataActions {
 
     public static List<Transaction> mergeTransactions(List<Transaction> original, List<Transaction> actual) {
         ImmutableCollection<Transaction> iterable = from(original).append(actual)
-                .index(new Function<Transaction, Integer>() {
+                .index(new Function<Transaction, String>() {
                     @Override
-                    public Integer apply(Transaction input) {
-                        return input.hashCode();
+                    public String apply(Transaction input) {
+                        return Joiner.on("").join(
+                                input.getComment(),
+                                input.getWho(),
+                                input.getCount(),
+                                input.getDate());
                     }
                 }).values();
         return newArrayList(iterable);
