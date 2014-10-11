@@ -1,8 +1,7 @@
 package ru.sharmana.misc;
 
-import org.jongo.ReflectiveObjectIdUpdater;
-import org.jongo.marshall.jackson.JacksonIdFieldSelector;
-import org.jongo.marshall.jackson.JacksonMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * User: lanwen
@@ -12,8 +11,10 @@ import org.jongo.marshall.jackson.JacksonMapper;
 public class Marshalling {
 
     public static String marshall(Object obj) {
-        return new JacksonMapper.Builder()
-                .withObjectIdUpdater(new ReflectiveObjectIdUpdater(new JacksonIdFieldSelector()))
-                .build().getMarshaller().marshall(obj).toString();
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Cant marshall", e);
+        }
     }
 }
