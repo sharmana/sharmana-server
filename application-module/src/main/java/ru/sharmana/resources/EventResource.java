@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.LogManager;
 
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
@@ -213,6 +214,11 @@ public class EventResource {
         }
         dbEvents.insert(event);
 
+        try {
+            LogManager.getLogManager().getLogger(this.getClass().getCanonicalName()).info(new ObjectMapper().writeValueAsString(event));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("", e);
+        }
         return Response.status(HttpStatus.CREATED_201).entity(event).build();
     }
 
