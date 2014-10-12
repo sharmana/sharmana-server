@@ -42,20 +42,18 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.collection.LambdaCollections.with;
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Ordering.from;
-import static com.google.common.collect.Ordering.natural;
 import static java.lang.String.format;
 import static javax.ws.rs.core.UriBuilder.fromUri;
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static ru.sharmana.misc.DBActions.getCollection;
 import static ru.sharmana.misc.DataActions.mergeTransactions;
 
 @Path("")
@@ -194,21 +192,23 @@ public class EventResource {
     @Path("event/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addEvent(Event event) {
+    public Response addEvent(Event event, @HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
         Preconditions.checkNotNull(event);
+        HashSet<String> emails = new HashSet<>(event.getEmails());
+        emails.add(DBActions.selectById(getCollection(UserResource.USERS_COLLECTION), token, User.class).getEmail());
 
-        MongoCollection dbEvents = DBActions.getCollection(EVENTS_COLLECTION);
+        MongoCollection dbEvents = getCollection(EVENTS_COLLECTION);
         if (event.getId() != null) {
             Event writed = DBActions.selectById(dbEvents, event.getId(), Event.class);
             if (writed == null) {
-                dbEvents.insert(event);
+                dbEvents.insert(event.withEmails(newArrayList(emails)));
                 return Response.status(HttpStatus.CREATED_201).entity(event).build();
             }
 
             List<Transaction> merged = mergeTransactions(writed.getTransactions(), event.getTransactions());
             writed.setTransactions(merged);
 
-            dbEvents.save(writed);
+            dbEvents.save(writed.withEmails(newArrayList(emails)));
             return Response.ok(writed).build();
         }
         dbEvents.insert(event);
@@ -232,10 +232,10 @@ public class EventResource {
     @Path("events/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addEvents(List<Event> events) {
+    public Response addEvents(List<Event> events, @HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
         Preconditions.checkNotNull(events);
 
-        MongoCollection dbEvents = DBActions.getCollection(EVENTS_COLLECTION);
+        MongoCollection dbEvents = getCollection(EVENTS_COLLECTION);
 
         final ImmutableListMultimap<String, Event> ids = from(events)
                 .filter(hasId())
@@ -294,9 +294,9 @@ public class EventResource {
     @Path("events/my")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Event> myEvents(@HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
-        MongoCollection events = DBActions.getCollection(EVENTS_COLLECTION);
+        MongoCollection events = getCollection(EVENTS_COLLECTION);
 
-        User current = DBActions.selectById(DBActions.getCollection(UserResource.USERS_COLLECTION), token, User.class);
+        User current = DBActions.selectById(getCollection(UserResource.USERS_COLLECTION), token, User.class);
         MongoCursor<Event> result = events.find("{emails:{$regex: #}}}", current.getEmail()).as(Event.class);
 
         return newArrayList(result.iterator());
