@@ -8,6 +8,13 @@ Sharmana Backend API
 #WADL Example
 http://api.sharmana.ru/application.wadl 
 
+##Setup
+
+Build with maven:
+`mvn clean install`
+
+Run with jetty-runner (in app module):
+`java $JAVA_OPTS -jar target/dependency/jetty-runner.jar --port $PORT target/*.war`
 
 ## Usage
 #### Authorization: 
