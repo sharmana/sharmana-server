@@ -202,7 +202,7 @@ public class EventResource {
         if (event.getId() != null) {
             Event writed = DBActions.selectById(dbEvents, event.getId(), Event.class);
             if (writed == null) {
-                dbEvents.insert(event.withEmails(newArrayList(emails)));
+                dbEvents.save(event.withEmails(newArrayList(emails)));
                 return Response.status(HttpStatus.CREATED_201).entity(event).build();
             }
 
@@ -271,7 +271,7 @@ public class EventResource {
                 })).toList();
 
 
-        dbEvents.insert(newEvents);
+        dbEvents.save(newEvents);
 
         return Response.status(HttpStatus.CREATED_201)
                 .entity(new Status().withCreated((long) newEvents.size())
