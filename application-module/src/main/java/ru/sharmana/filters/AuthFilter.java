@@ -29,7 +29,6 @@ public class AuthFilter implements ContainerRequestFilter {
         if (
                 requestContext.getUriInfo().getPath().equals("")
                         || requestContext.getUriInfo().getPath().startsWith("user/auth")
-                        || requestContext.getUriInfo().getPath().equals("pay")
                         || requestContext.getUriInfo().getPath().equals("application.wadl")
                 ) {
             return;
