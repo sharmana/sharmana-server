@@ -33,6 +33,25 @@ public class Props {
     @Property("mongo.dbname")
     private String dbName = "sharmana";
 
+
+    @Property("client.id.key")
+    private String clientId = "";
+
+
+    @Property("yandex.money.api.template")
+    private String yaMoneyApiTemplate = "https://money.yandex.ru/api/{method}";
+
+
+    @Property("sharmana.application.uri.success")
+    private String sharmanaAppUriSuccess = "sharmana://success";
+
+
+    @Property("sharmana.application.uri.failed")
+    private String sharmanaAppUriFailed = "sharmana://failed";
+
+
+
+
     public ServerAddress getMongoServerAddress() {
         try {
             return new ServerAddress(mongoUri.getHost(), mongoUri.getPort());
@@ -43,5 +62,21 @@ public class Props {
 
     public String getDbName() {
         return dbName;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public String getYaMoneyApiTemplate() {
+        return yaMoneyApiTemplate;
+    }
+
+    public String getSharmanaAppUriSuccess() {
+        return sharmanaAppUriSuccess;
+    }
+
+    public String getSharmanaAppUriFailed() {
+        return sharmanaAppUriFailed;
     }
 }

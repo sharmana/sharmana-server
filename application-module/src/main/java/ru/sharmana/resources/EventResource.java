@@ -34,9 +34,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +51,8 @@ import static ch.lambdaj.collection.LambdaCollections.with;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Ordering.from;
 import static com.google.common.collect.Ordering.natural;
+import static java.lang.String.format;
+import static javax.ws.rs.core.UriBuilder.fromUri;
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -59,6 +63,10 @@ public class EventResource {
 
     public static final String EVENTS_COLLECTION = "events";
 
+    @Context
+    private UriInfo baseUri;
+
+
     @POST
     @Path("event/checkout")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -67,7 +75,7 @@ public class EventResource {
         Preconditions.checkNotNull(event);
         Preconditions.checkNotNull(event.getId());
 
-        return Response.status(HttpStatus.OK_200).entity(event.withCheckouts(checkout(event))).build();
+        return Response.status(HttpStatus.OK_200).entity(event.withCheckouts(checkout(event, baseUri))).build();
     }
 
     public static FluentIterable<SumEachCheckout> doubts(Event event) {
@@ -85,7 +93,7 @@ public class EventResource {
         return from(checkouts).transform(doubts(each));
     }
 
-    public static List<Checkout> checkout(Event event) {
+    public static List<Checkout> checkout(Event event, UriInfo baseUri) {
         LambdaIterable<SumEachCheckout> doubts = with(doubts(event)).clone();
 
         List<Checkout> totally = new ArrayList<>();
@@ -102,10 +110,13 @@ public class EventResource {
                 break;
             } else if(Math.abs(minimal.getCount()) <= maximum.getCount()) {
                 totally.add(new Checkout()
+                        .withYamoneyUrl(fromUri(baseUri.getBaseUri()).path("pay")
+                                .queryParam("amount", Math.abs(minimal.getCount()))
+                                .queryParam("transaction_name", format("%s (%s)", event.getName(), minimal.getEmail()))
+                                .build().toString())
                         .withWho(minimal.getEmail())
                         .withTo(maximum.getEmail())
-                        .withCount(Math.abs(minimal.getCount())
-                        ));
+                        .withCount(Math.abs(minimal.getCount())));
 
                 maximum.withCount(maximum.getCount() + minimal.getCount());
                 doubts = doubts.remove(equalTo(minimal));
@@ -113,6 +124,10 @@ public class EventResource {
 
             } else {
                 totally.add(new Checkout()
+                        .withYamoneyUrl(fromUri(baseUri.getBaseUri()).path("pay")
+                                .queryParam("amount", Math.abs(minimal.getCount()))
+                                .queryParam("transaction_name", format("%s (%s)", event.getName(), minimal.getEmail()))
+                                .build().toString())
                         .withWho(minimal.getEmail())
                         .withTo(maximum.getEmail())
                         .withCount(maximum.getCount()
@@ -135,15 +150,6 @@ public class EventResource {
             protected Boolean featureValueOf(SumEachCheckout actual) {
                 return actual.getCount().equals(minimal.getCount())
                         && actual.getEmail().equals(minimal.getEmail());
-            }
-        };
-    }
-
-    public static Comparator<SumEachCheckout> naturalOrder() {
-        return new Comparator<SumEachCheckout>() {
-            @Override
-            public int compare(SumEachCheckout o1, SumEachCheckout o2) {
-                return Doubles.compare(o1.getCount(), o2.getCount());
             }
         };
     }

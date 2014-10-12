@@ -2,7 +2,6 @@ package ru.sharmana.tests;
 
 import ch.lambdaj.collection.LambdaIterable;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.FluentIterable;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import ru.sharmana.beans.Checkout;
@@ -11,6 +10,8 @@ import ru.sharmana.beans.SumEachCheckout;
 import ru.sharmana.beans.Transaction;
 import ru.sharmana.resources.EventResource;
 
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.having;
@@ -21,6 +22,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * User: lanwen
@@ -69,7 +72,9 @@ public class CheckoutTest {
 
     @Test
     public void checkoutShouldCount1() throws Exception {
-        List<Checkout> checkout = EventResource.checkout(getEvent1());
+        UriInfo mock = mock(UriInfo.class);
+        when(mock.getBaseUri()).thenReturn(URI.create("/"));
+        List<Checkout> checkout = EventResource.checkout(getEvent1(), mock);
         System.out.println(new ObjectMapper().writeValueAsString(checkout));
 
         assertThat(checkout, hasSize(2));
@@ -93,7 +98,9 @@ public class CheckoutTest {
 
     @Test
     public void checkoutShouldCount2() throws Exception {
-        List<Checkout> checkout = EventResource.checkout(getEvent2());
+        UriInfo mock = mock(UriInfo.class);
+        when(mock.getBaseUri()).thenReturn(URI.create("/"));
+        List<Checkout> checkout = EventResource.checkout(getEvent2(), mock);
         System.out.println(new ObjectMapper().writeValueAsString(checkout));
 
         assertThat(checkout, hasSize(3));

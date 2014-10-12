@@ -1,0 +1,11 @@
+{
+    "status": "success",
+    "title": "Перевод на счет 410012540659622",
+    "contract_amount": 1.00,
+    "request_id": "",
+    "error": "illegal_params",
+    "error_description": "",
+    "money_source": {
+        "payment-card": {}
+    }
+}
