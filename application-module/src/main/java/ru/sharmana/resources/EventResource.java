@@ -215,7 +215,7 @@ public class EventResource {
         dbEvents.insert(event);
 
         try {
-            LogManager.getLogManager().getLogger(this.getClass().getCanonicalName()).info(new ObjectMapper().writeValueAsString(event));
+            System.out.println(new ObjectMapper().writeValueAsString(event));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("", e);
         }
