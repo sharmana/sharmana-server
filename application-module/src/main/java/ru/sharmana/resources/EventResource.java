@@ -196,7 +196,9 @@ public class EventResource {
     public Response addEvent(Event event, @HeaderParam(HttpHeaders.AUTHORIZATION) String token) {
         Preconditions.checkNotNull(event);
         HashSet<String> emails = new HashSet<>(event.getEmails());
-        emails.add(DBActions.selectById(getCollection(UserResource.USERS_COLLECTION), token, User.class).getEmail());
+        User current = DBActions.selectById(getCollection(UserResource.USERS_COLLECTION), token, User.class);
+        System.out.println(current.getEmail());
+        emails.add(current.getEmail());
 
         MongoCollection dbEvents = getCollection(EVENTS_COLLECTION);
         if (event.getId() != null) {
@@ -212,7 +214,7 @@ public class EventResource {
             dbEvents.save(writed.withEmails(newArrayList(emails)));
             return Response.ok(writed).build();
         }
-        dbEvents.insert(event);
+        dbEvents.save(event.withEmails(newArrayList(emails)));
 
         try {
             System.out.println(new ObjectMapper().writeValueAsString(event));
