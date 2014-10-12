@@ -111,7 +111,7 @@ public class EventResource {
             } else if(Math.abs(minimal.getCount()) <= maximum.getCount()) {
                 totally.add(new Checkout()
                         .withYamoneyUrl(fromUri(baseUri.getBaseUri()).path("pay")
-                                .queryParam("amount", Math.abs(minimal.getCount()))
+                                .queryParam("amount", Math.round(Math.abs(minimal.getCount())))
                                 .queryParam("transaction_name", format("%s (%s)", event.getName(), minimal.getEmail()))
                                 .build().toString())
                         .withWho(minimal.getEmail())
@@ -125,7 +125,7 @@ public class EventResource {
             } else {
                 totally.add(new Checkout()
                         .withYamoneyUrl(fromUri(baseUri.getBaseUri()).path("pay")
-                                .queryParam("amount", Math.abs(minimal.getCount()))
+                                .queryParam("amount", Math.round(Math.abs(minimal.getCount())))
                                 .queryParam("transaction_name", format("%s (%s)", event.getName(), minimal.getEmail()))
                                 .build().toString())
                         .withWho(minimal.getEmail())
