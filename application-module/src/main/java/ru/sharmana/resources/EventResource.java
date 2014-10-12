@@ -2,6 +2,8 @@ package ru.sharmana.resources;
 
 import ch.lambdaj.collection.LambdaIterable;
 import ch.lambdaj.collection.LambdaList;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -65,12 +67,7 @@ public class EventResource {
         Preconditions.checkNotNull(event);
         Preconditions.checkNotNull(event.getId());
 
-        checkout(event);
-
-
-
-
-        return Response.status(HttpStatus.OK_200).entity("").build();
+        return Response.status(HttpStatus.OK_200).entity(event.withCheckouts(checkout(event))).build();
     }
 
     public static FluentIterable<SumEachCheckout> doubts(Event event) {
@@ -101,26 +98,29 @@ public class EventResource {
             Collections.reverse(sorted);
             SumEachCheckout maximum = sorted.get(0);
 
-            System.out.println(minimal.getCount());
-            System.out.println(maximum.getCount());
-//            System.out.println(doubts.size());
             if (minimal.getCount().equals(maximum.getCount())) {
                 break;
             } else if(Math.abs(minimal.getCount()) <= maximum.getCount()) {
-                System.out.println(minimal.getCount() + "<=" + maximum.getCount());
-                maximum.withCount(maximum.getCount() + minimal.getCount());
-                doubts = doubts.remove(equalTo(minimal));
-
                 totally.add(new Checkout()
                         .withWho(minimal.getEmail())
                         .withTo(maximum.getEmail())
                         .withCount(Math.abs(minimal.getCount())
                         ));
+
+                maximum.withCount(maximum.getCount() + minimal.getCount());
+                doubts = doubts.remove(equalTo(minimal));
+
+
             } else {
+                totally.add(new Checkout()
+                        .withWho(minimal.getEmail())
+                        .withTo(maximum.getEmail())
+                        .withCount(maximum.getCount()
+                        ));
 
-
-                System.out.println("else");
-                break;
+                doubts = doubts.remove(equalTo(maximum));
+                minimal.withCount(minimal.getCount() + maximum.getCount());
+                maximum.withCount(0.0);
             }
 
             doubts = doubts.remove(having(on(SumEachCheckout.class).getCount(), Matchers.equalTo(0.0)));

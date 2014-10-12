@@ -44,7 +44,6 @@
                             <annotationStyle>jackson2</annotationStyle>
                             <sourceType>json</sourceType>
                             <useCommonsLang3>true</useCommonsLang3>
-                            <includeToString>false</includeToString>
                             <useLongIntegers>true</useLongIntegers>
                             <generateBuilders>true</generateBuilders>
                         </configuration>
@@ -61,7 +60,6 @@
                             <annotationStyle>jackson2</annotationStyle>
                             <sourceType>jsonschema</sourceType>
                             <useCommonsLang3>true</useCommonsLang3>
-                            <includeToString>false</includeToString>
                             <useLongIntegers>true</useLongIntegers>
                             <generateBuilders>true</generateBuilders>
                         </configuration>
