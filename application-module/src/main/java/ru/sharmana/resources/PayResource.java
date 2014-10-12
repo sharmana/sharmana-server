@@ -31,9 +31,9 @@ public class PayResource {
 
     public static final String SUCCESS_STATUS = "success";
 
-    @POST
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPayment(@FormParam("to") String to,
+    public Response createPayment(@QueryParam("to") String to,
                                   @QueryParam("amount") String amount,
                                   @QueryParam("transaction_name") String name) {
         Preconditions.checkNotNull(to);
