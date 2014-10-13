@@ -2,23 +2,18 @@ package ru.sharmana.resources;
 
 import ch.lambdaj.collection.LambdaIterable;
 import ch.lambdaj.collection.LambdaList;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Doubles;
 import jersey.repackaged.com.google.common.base.Preconditions;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matchers;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
-import org.w3c.dom.Document;
 import ru.sharmana.beans.Checkout;
 import ru.sharmana.beans.Event;
 import ru.sharmana.beans.Status;
@@ -44,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.LogManager;
 
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
@@ -197,7 +191,6 @@ public class EventResource {
         Preconditions.checkNotNull(event);
         HashSet<String> emails = new HashSet<>(event.getEmails());
         User current = DBActions.selectById(getCollection(UserResource.USERS_COLLECTION), token, User.class);
-        System.out.println(current.getEmail());
         emails.add(current.getEmail());
 
         MongoCollection dbEvents = getCollection(EVENTS_COLLECTION);
@@ -215,12 +208,6 @@ public class EventResource {
             return Response.ok(writed).build();
         }
         dbEvents.save(event.withEmails(newArrayList(emails)));
-
-        try {
-            System.out.println(new ObjectMapper().writeValueAsString(event));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("", e);
-        }
         return Response.status(HttpStatus.CREATED_201).entity(event).build();
     }
 

@@ -11,6 +11,7 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -20,6 +21,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  * Date: 11.10.14
  * Time: 20:57
  */
+@Provider
 @PreMatching
 public class AuthFilter implements ContainerRequestFilter {
     @Override
