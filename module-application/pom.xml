@@ -3,19 +3,27 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>sharmana-backend</artifactId>
+        <artifactId>sharmana</artifactId>
         <groupId>ru.sharmana</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
-    <artifactId>application-module</artifactId>
+    <artifactId>module-application</artifactId>
 
     <name>sharmana-application-module</name>
 
 
     <dependencies>
 
+        <!--MODULES-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>module-beans</artifactId>
+        </dependency>
+        <!--/MODULES-->
+
+        <!--UTIL-->
         <dependency>
             <groupId>com.googlecode.lambdaj</groupId>
             <artifactId>lambdaj</artifactId>
@@ -27,26 +35,36 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.sharmana</groupId>
-            <artifactId>beans-module</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.jongo</groupId>
-            <artifactId>jongo</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <dependency>
             <groupId>ru.yandex.qatools.properties</groupId>
             <artifactId>properties-loader</artifactId>
         </dependency>
+        <!--/UTIL-->
+
+
+        <!--MONGO-->
+        <dependency>
+            <groupId>org.jongo</groupId>
+            <artifactId>jongo</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
         </dependency>
+        <!--/MONGO-->
 
 
+        <!--JERSEY-->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
@@ -56,32 +74,10 @@
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
         </dependency>
+        <!--/JERSEY-->
 
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <version>0.9.1</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>${jetty.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
+        <!--JACKSON-->
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
@@ -91,11 +87,36 @@
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
         </dependency>
+        <!--/JACKSON-->
 
+
+
+        <!--LOGGING-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <!--/LOGGING-->
+
+
+        <!--JETTY-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+        </dependency>
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+        </dependency>
+        <!--/JETTY-->
+
+
+
+        <!--TESTING-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
         </dependency>
 
         <dependency>
@@ -104,20 +125,13 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
+        <!--/TESTING-->
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>sharmana-backend-java</finalName>
+        <finalName>sharmana-server</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -129,21 +143,20 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeScope>compile</includeScope>
-                        </configuration>
-                    </execution>
-
                     <execution>
                         <id>copy-jetty-runner</id>
                         <phase>package</phase>
@@ -161,9 +174,9 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
