@@ -94,7 +94,7 @@
         <!--LOGGING-->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>slf4j-jdk14</artifactId>
         </dependency>
         <!--/LOGGING-->
 
@@ -153,41 +153,20 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-jetty-runner</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.eclipse.jetty</groupId>
-                                    <artifactId>jetty-runner</artifactId>
-                                    <version>${jetty.version}</version>
-                                    <destFileName>jetty-runner.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <contextPath>/</contextPath>
+                    <goal>run</goal>
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
+                    <stopPort>9090</stopPort>
+                    <stopKey>sharmana-local</stopKey>
+
                     <webApp>
-                        <contextPath>/v1</contextPath>
-                        <webInfIncludeJarPattern>.*/.*jersey-[^/]\.jar$</webInfIncludeJarPattern>
+                        <contextPath>/</contextPath>
                     </webApp>
-                    <war>${project.build.directory}/${project.build.finalName}.war</war>
                 </configuration>
             </plugin>
         </plugins>
