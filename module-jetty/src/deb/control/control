@@ -4,6 +4,8 @@ Section: misc
 Priority: optional
 Architecture: all
 Depends:
-Maintainer: lanwen
-Description: Sharmana REST-api
+Vcs-Git: git@github.com:sharmana/sharmana-server.git
+Vcs-browser: https://github.com/sharmana/sharmana-server
+Maintainer: lanwen <lanwen@user.github.com>
+Description: [[description]]
 Distribution: development
